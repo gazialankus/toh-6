@@ -36,7 +36,13 @@ class HeroSearchComponent implements OnInit {
                     // it's actually term->Stream<List<Hero>>, but the stream emits a single List<Hero>.
                     // role of switchmap still not clear...
                     // switchMap calls this function for each term. if there's a new term coming in before the old one is done, 
-                    // the old one's list of items are not emitted?
+                    // the old one's list of items are not emitted. yes, more clearly: 
+                    // if the old one's stream did not emit, yet (it's results did not arrive from the server, yet)
+                    //   and the new term arrived, whose stream is immediately created (which would emit later in time)
+                    //     then, the old stream is not used anymore. old one's results are ignored. are not emitted from here.
+                    //     instead, we wait for the new one's results.
+                    //     so, we could never get a result in this scenario: 
+                    //       if we created a term every 0.1 seconds and the results arrive from the server in 0.2 seconds. 
         .transform(switchMap((term) => term.isEmpty
             ? Stream<List<Hero>>.fromIterable([<Hero>[]])
             : _heroSearchService.search(term).asStream()))
