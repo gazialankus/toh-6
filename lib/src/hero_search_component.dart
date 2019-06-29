@@ -30,7 +30,12 @@ class HeroSearchComponent implements OnInit {
   void ngOnInit() async {
     heroes = _searchTerms.stream
         .transform(debounce(Duration(milliseconds: 300)))
-        .distinct()
+        .distinct() // here we simply have single terms flowing. the following will transform them to results for this term.
+                    // the inner function gets a term and creates a List of results for it. the result is a
+                    // list of elements for each term. term -> List<Hero> is what we have in this stream transformation. 
+                    // role of switchmap still not clear...
+                    // switchMap calls this function for each term. if there's a new term coming in before the old one is done, 
+                    // the old one's list of items are not emitted?
         .transform(switchMap((term) => term.isEmpty
             ? Stream<List<Hero>>.fromIterable([<Hero>[]])
             : _heroSearchService.search(term).asStream()))
