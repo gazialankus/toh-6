@@ -33,6 +33,7 @@ class HeroSearchComponent implements OnInit {
         .distinct() // here we simply have single terms flowing. the following will transform them to results for this term.
                     // the inner function gets a term and creates a List of results for it. the result is a
                     // list of elements for each term. term -> List<Hero> is what we have in this stream transformation. 
+                    // it's actually term->Stream<List<Hero>>, but the stream emits a single List<Hero>.
                     // role of switchmap still not clear...
                     // switchMap calls this function for each term. if there's a new term coming in before the old one is done, 
                     // the old one's list of items are not emitted?
